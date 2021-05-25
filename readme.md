@@ -135,6 +135,8 @@ verbose=vvvvv
 ~$ mongo
 ```
 
+> Mongo Shell is a JavaScript Interpreter.
+
 ---
 
 ## DB list in the server
@@ -271,65 +273,310 @@ start "c" mongod --dbpath .\db3 --port 50000 --replSet "demo"
 
 - Run the `ReplicaSet.bat` file to execute code inside it
 
----
+> As a result all three server will running parally.
 
+## Set Default Port
 
+- Now telling mongo which port will be the default port. `[Running all three servers]`
 
----
----
----
-
-# **Replica Set**
-
----
-
-- Config
-
-
-```sql
-> var demoConfig = {...}
+```cmd
+~$ mongo --port 30000
 ```
 
-```sql
-> demoConfig
-	{
-		"_id"	 :"demo",
-		"members": [
-			{
-				"_id"	   :0,
-				"host"	   : "localhost: 30000",
-				"priority" : 10
-			},
-			{
-				"_id"	   :1,
-				"host"     : "localhost: 40000",
-			},
-			{
-				"_id"	     :0,
-				"host"	     : "localhost: 30000",
-				"arbiterOnly":true
-			}
-		]
-	}
+## Checking Server
+
+- Which Server I have been connected.
+
+```cmd
+> db.getMongo()
 ```
 
-```sql
-> rs.initiate(demoConfig)
+> Output:
+
+```cmd
+connection to 127.0.0.1:30000
 ```
 
-```sql
-> db.foo.save({"_id": 1, "value":"Hello World"})
-> db.foo.find()
+## Find Replica Set
+
+### Create `JS` variable to store replicaset
+
+```js
+> demoConfig = {"_id":"demo","members":[{"_id":0,"host":"localhost:30000","priority":10},{"_id":1,"host":"localhost:40000",},{"_id":2,"host":"localhost:50000","arbiterOnly":true}]}
 ```
 
-- From Secondary slaves
+> Outputs
 
-
-```sql
-> db.foo.find()     /* Could not find the data */
-> db.setSlaveOk()
-> db.foo.find()		/* Now ok*/
+```cmd
+{
+	"_id" : "demo",
+	"members" : 
+	[
+		{
+			"_id" : 0,
+			"host" : "localhost:30000",
+			"priority" : 10
+		},
+		{
+			"_id" : 1,
+			"host" : "localhost:40000"
+		},
+		{
+			"_id" : 2,
+			"host" : "localhost:50000",
+			"arbiterOnly" : true
+		}
+	]
+}
 ```
+
+> As id=0 has priority of 10. And none other have any priority, So its guranteed that member with id=0 is the primary DB.
+
+> `arbiter` is true. So its not gonna receive or send any data.
+
+---
+
+## Initilize the Replica set Config.
+
+```cmd
+~$ rs.initiate(demoConfig)
+```
+
+> Output
+
+```cmd
+{ "ok" : 1 }
+demo:SECONDARY> 
+demo:PRIMARY> exit
+```
+---
+
+## Verifying Replication Works
+
+---
+
+```js
+> mongo --port 30000
+```
+
+> `demo:PRIMARY>`
+
+```js
+> mongo --port 40000
+```
+
+> `demo:SECONDARY>`
+
+```js
+> mongo --port 50000
+```
+
+> `demo:ARBITER>`
+
+---
+
+## `Primary DB`	: `[mongo --port 30000]`
+
+### Save data in collection `foo` in 
+
+```js
+demo:PRIMARY> db.foo.save({_id:1, value:'Hello World'})
+```
+- Output
+
+```cmd
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : 1 })
+```
+
+### Check the data in `foo`
+
+```js
+demo:PRIMARY> db.foo.find()
+```
+
+> Output
+
+```cmd
+{ "_id" : 1, "value" : "Hello World" }
+```
+
+- So in primary DB we can read and write as well.
+
+---
+
+## `Secomdary DB`	: `[mongo --port 40000]`
+
+### Check the data in `foo`
+
+```js
+demo:SECONDARY> db.foo.find()
+```
+
+> Output
+
+```cmd
+Error: error: {
+        "topologyVersion" : {
+                "processId" : ObjectId("60acca6ef0fb72c5dd4e394d"),
+                "counter" : NumberLong(4)
+        },
+        "operationTime" : Timestamp(1621944723, 1),
+        "ok" : 0,
+        "errmsg" : "not master and slaveOk=false",
+        "code" : 13435,
+        "codeName" : "NotPrimaryNoSecondaryOk",
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1621944723, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                        "keyId" : NumberLong(0)
+                }
+        }
+}
+```
+
+> `"errmsg" : "not master and slaveOk=false",`
+
+- setting the **Slave** `Ok`
+
+```js
+demo:SECONDARY> db.setSlaveOk()		//setSlaveOk() is deprecated and may be removed in the next major release. Please use setSecondaryOk() instead.
+```
+- or
+
+```js
+demo:SECONDARY> db.setSecondaryOk()	//***
+```
+
+### Now Check the `foo`
+
+```js
+demo:SECONDARY> db.foo.find()
+```
+
+> Output
+
+```cmd
+{ "_id" : 1, "value" : "Hello World" }
+```
+> The document I write in the `Primary` made it into `Secondary`.
+
+
+### Try to save data in collection `foo` from `Secondary
+
+```js
+demo:SECONDARY> db.foo.save({_id:2, value:'Hi World'})
+```
+- Output
+
+```cmd
+WriteCommandError({
+        "topologyVersion" : {
+                "processId" : ObjectId("60acca6ef0fb72c5dd4e394d"),
+                "counter" : NumberLong(4)
+        },
+        "operationTime" : Timestamp(1621945233, 1),
+        "ok" : 0,
+        "errmsg" : "not master",
+        "code" : 10107,
+        "codeName" : "NotWritablePrimary",
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1621945233, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                        "keyId" : NumberLong(0)
+                }
+        }
+})
+```
+
+> `"errmsg" : "not master",`
+
+- So the write permission is not available as it is not master db. Its secondary db meaning slave.
+
+---
+
+# **Replica Set Failover**
+
+---
+
+- Now we just kill the server `a` which is `primary db` by exitting the terminal related to `a` server.
+
+- Now we have two server running those are `b` and `c` meaning `Secondary` and `Arbitery`.
+
+- At this point there is no primary.
+
+- Secondary is still readable.
+
+```js
+demo:SECONDARY> db.foo.find()	
+```
+
+> Output
+
+```cmd
+{ "_id" : 1, "value" : "Hello World" }
+```
+
+- After a few seconds the `Secondary` becomes the `Primary`
+
+```js
+demo:PRIMARY>			//this was port 40000
+```
+
+- Proof of port `40000`
+
+```js
+demo:PRIMARY> db.getMongo()			//connection to 127.0.0.1:40000
+```
+
+## Try to save data in collection `foo` from `Secondary` Which is now `Primary`
+
+```js
+demo:PRIMARY> db.foo.save({_id:2, value:'Hi World'})
+```
+- Output
+
+```cmd
+WriteResult({ "nMatched" : 0, "nUpserted" : 1, "nModified" : 0, "_id" : 2 })
+```
+
+```js
+demo:PRIMARY> db.foo.find()
+```
+
+> Output
+
+```cmd
+{ "_id" : 1, "value" : "Hello World" }
+{ "_id" : 2, "value" : "Hi World" }
+```
+
+## Now Resurrect the `Primary` server.
+
+```cmd
+~$ cd pluralsight
+~$ start "a" mongod --dbpath .\db1 --port 30000 --replSet "demo"
+```
+
+## Now go to server `30000`
+
+```js
+demo:PRIMARY> 
+```
+
+> `Primary` server is now running
+
+---
+
+## Now go to server `40000`
+
+```js
+demo:SECONDARY>
+```
+
+> It is again `Secondary` now after resurrect the `Primary` server up`
+
 
 ---
 
