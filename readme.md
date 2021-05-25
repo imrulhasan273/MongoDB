@@ -577,6 +577,16 @@ demo:SECONDARY>
 
 > It is again `Secondary` now after resurrect the `Primary` server up`
 
+## Show Status
+
+```js
+demo:SECONDARY> rs.help()
+```
+
+```js
+demo:SECONDARY> rs.status()
+```
+
 
 ---
 
