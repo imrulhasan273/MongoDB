@@ -39,27 +39,44 @@
 
 ---
 
+- At First Change Directory to the MongoDB Folder you created using `Administrative`.
+
+---
+
+## Create a directory in `MongoDB/pluralsight/db`
+
+---
+
+```cmd
+~$ md pluralsight
+~$ cd pluralsight
+~$ md db
+```
+
+---
+
 ## Create a Configuration File	
 
-- `C:\pluralsight\mongod.conf`
+- `mongod.conf`
 
 ```conf
 # Where data files will reside
-dbpath=/pluralsight/db 
+dbpath=pluralsight/db 
 
 # Where the log file will be stored
-logpath=/pluralsight/mongo-server.log 
+logpath=pluralsight/mongo-server.log 
 
 # How verbose the sever will be logging
 verbose=vvvvv
 ```
 
-## Run in CMD
+## Run the `conf` file in CMD
 
 ```cmd
-> mongod -f C:\pluralsight\mongod.conf
+> mongod -f mongod.conf
 ```
-> By doing this a log file will be generated with same dir like below
+
+> By doing this a log file will be generated in `pluralsight/` like below
 
 - `mongo-server.log`
 
@@ -67,16 +84,19 @@ verbose=vvvvv
 {"t":{"$date":"2021-05-25T10:46:46.888+06:00"},"s":"D1", "c":"CONTROL",  "id":22610,   "ctx":"main","msg":"Loading library: {toUtf8String_full_path_c_str}","attr":{"toUtf8String_full_path_c_str":"Schannel.dll"}}
 ```
 
+> And log data will be stored in `pluralsight/db` dir
+
+
 ## View the Conf file
 
 ```cmd
-> more C:\pluralsight\mongo-server.log
+> more pluralsight\mongo-server.log
 ```
 
 ## Install As Service
 
 ```cmd
-> mongod -f C:\pluralsight\mongod.conf --install
+> mongod -f mongod.conf --install
 ```
 
 ```log
@@ -107,7 +127,18 @@ verbose=vvvvv
 
 ---
 
+## MongoDB Shell
+
+---
+
+```cmd
+~$ mongo
+```
+
+---
+
 ## DB list in the server
+
 
 ```sql
 > show dbs
@@ -123,11 +154,13 @@ test_db  0.001GB
 
 ## Switing DB to Another DB
 
-- Currently I am In DB:
+- Currently I am In DB: 
 
 ```sql
 > db
 ```
+
+> **Output** : `test`
 
 - Switch to `foo` DB
 
@@ -216,7 +249,29 @@ test_db  0.001GB
 
 ---
 
+## Creating the `.bat` file
 
+```bat
+cd pluralsight\
+md db1
+md db2
+md db3
+
+@REM Primary
+start "a" mongod --dbpath .\db1 --port 30000 --replSet "demo"
+
+@REM Secondary
+start "b" mongod --dbpath .\db2 --port 40000 --replSet "demo"
+
+@REM Arbiter
+start "c" mongod --dbpath .\db3 --port 50000 --replSet "demo"
+```
+
+## Run the bat file from `MongoDB` directory.
+
+- Run the `ReplicaSet.bat` file to execute code inside it
+
+---
 
 
 
