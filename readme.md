@@ -35,6 +35,195 @@
 
 ---
 
+# **Server Management**
+
+---
+
+## Create a Configuration File	
+
+- `C:\pluralsight\mongod.conf`
+
+```conf
+# Where data files will reside
+dbpath=/pluralsight/db 
+
+# Where the log file will be stored
+logpath=/pluralsight/mongo-server.log 
+
+# How verbose the sever will be logging
+verbose=vvvvv
+```
+
+## Run in CMD
+
+```cmd
+> mongod -f C:\pluralsight\mongod.conf
+```
+> By doing this a log file will be generated with same dir like below
+
+- `mongo-server.log`
+
+```log
+{"t":{"$date":"2021-05-25T10:46:46.888+06:00"},"s":"D1", "c":"CONTROL",  "id":22610,   "ctx":"main","msg":"Loading library: {toUtf8String_full_path_c_str}","attr":{"toUtf8String_full_path_c_str":"Schannel.dll"}}
+```
+
+## View the Conf file
+
+```cmd
+> more C:\pluralsight\mongo-server.log
+```
+
+## Install As Service
+
+```cmd
+> mongod -f C:\pluralsight\mongod.conf --install
+```
+
+```log
+{"t":{"$date":"2021-05-25T04:59:22.178Z"},"s":"F",  "c":"CONTROL",  "id":20574,   "ctx":"main","msg":"Error during global initialization","attr":{"error":{"code":2,"codeName":"BadValue","errmsg":"logpath requires an absolute file path with Windows services"}}}
+```
+
+## Start the Server
+
+```cmd
+> net start mongodb
+```
+
+> `Note: Open CMD as Administrator`
+
+---
+
+## Check the Server if exists
+
+```cmd
+> net start | findstr Mongo
+```
+
+## Stop the server
+
+```cmd
+> net stop mongodb
+```
+
+---
+
+## DB list in the server
+
+```sql
+> show dbs
+```
+> Output Below
+
+```cmd
+admin    0.000GB
+config   0.000GB
+local    0.000GB
+test_db  0.001GB
+```
+
+## Switing DB to Another DB
+
+- Currently I am In DB:
+
+```sql
+> db
+```
+
+- Switch to `foo` DB
+
+```sql
+> use foo
+```
+
+- Currently I am In DB:
+
+```sql
+> db
+```
+
+> **Output** : `foo`
+
+---
+
+# **Replica Set**
+
+---
+
+- Minimul Replica Set
+	- Primary DB
+	- Secondary DB
+	- Arbiter DB
+
+---
+
+## Primary DB
+
+- One and only writable instance in a replica set `[Single Primary]`
+
+- Attempt to write `secondary` will fail.
+
+---
+
+## Secondary DB
+
+- Read only instances	`[May have many Secondary DB]`
+
+- Data is going to be replicated from the `Primary DB` eventually	`[Eventual COnsistency]`
+
+
+## Case 1: Primary DB is failed.
+
+- One of the secondaries will take over and will become primary.
+
+- Automatic recovery from a crash of the `Primary DB` and gives your farm resilience against a `single server failer`
+
+
+## Case 2: One of the Secondary DB is failed
+
+- Not big deal as we have still `Primary DB`
+
+- Also we have other `Secondaries DB`
+
+- No Data Loss 
+
+- No Loss of Functionality
+
+---
+
+## Arbiter DB
+
+> If the primary DB is failed then one of the secondary DB will take over. But which one?
+
+> Surely only one should become primary DB at any given moment.
+
+> Mongo Does election.
+
+### Case 1: Even Number of Servers
+
+- 1 Primary
+
+- 1 Secondary
+
+> Then Primary is failed. The secondary will not beconme the `primary DB`. Why? Because it is the only voter.
+
+> `Three Members:` If `Primary` fails then two members remaining. Each one has vote. If they both vote for the same machine, and the arbiter will always vote for somebody else. So the `secondary` and the `arbiter` will alll vote for the `secondary`. Thats two out of three, thats the majority. The `secondary` will take over.
+
+> If you had only the `primary` and the `secondary` those are two machines. If the primary fails, the remaining machine has one vote out of two. Thats exactly 50%, that's not a simple majority. It needs slightly more than 50%. In that case the secondary will not take over. SO the `arbiter` will provide an additional vote. An `Arbiter` is also special as it does not have any data on it. Its sole purpose in life is to break the tie on an election. `Arbiter` is much smaller machine as it does not need a lot of disk or a lot of memory.
+
+---
+
+# **Configuring Replica Set**
+
+---
+
+
+
+
+
+---
+---
+---
+
 # **Replica Set**
 
 ---
@@ -86,6 +275,8 @@
 > db.setSlaveOk()
 > db.foo.find()		/* Now ok*/
 ```
+
+---
 
 ---
 
