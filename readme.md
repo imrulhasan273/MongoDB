@@ -11,25 +11,25 @@
 
 - Show all the db
 
-```sql
+```js
 > db
 ```
 
 - Swith to another DB
 
-```sql
+```js
 > use foo
 ```
 
 - Addministrative commands?
 
-```sql
+```js
 > help
 ```
 
 - Get Server Address
 
-```sql
+```js
 > db.getMongo()
 ```
 
@@ -142,7 +142,7 @@ verbose=vvvvv
 ## DB list in the server
 
 
-```sql
+```js
 > show dbs
 ```
 > Output Below
@@ -158,7 +158,7 @@ test_db  0.001GB
 
 - Currently I am In DB: 
 
-```sql
+```js
 > db
 ```
 
@@ -166,13 +166,13 @@ test_db  0.001GB
 
 - Switch to `foo` DB
 
-```sql
+```js
 > use foo
 ```
 
 - Currently I am In DB:
 
-```sql
+```js
 > db
 ```
 
@@ -521,7 +521,7 @@ demo:SECONDARY> db.foo.find()
 - After a few seconds the `Secondary` becomes the `Primary`
 
 ```js
-demo:PRIMARY>			//this was port 40000
+demo:PRIMARY>						//this was port 40000
 ```
 
 - Proof of port `40000`
@@ -601,12 +601,12 @@ demo:SECONDARY>
 
 - will show collection of that db
 
-```sql
+```js
 > use test_db		
 > show collections  
 ```
 
-```sql
+```js
 > db.foo.save({_id: 1, x: 10})
 ```
 
@@ -614,17 +614,17 @@ demo:SECONDARY>
 
 - Fetch the record from foo collection
 
-```sql
+```js
 > db.foo.find()
 ```
 
-```sql
+```js
 > db.system.indexes.find()
 ```
 
 - Type of `_id` in doc?
 
-```sql
+```js
 	_id: 1
 	_id: 3.14
 	_id: "Hello"
@@ -638,21 +638,21 @@ demo:SECONDARY>
 
 ## **Complex doc**
 
-```sql
+```js
 > db.users.save({ Name: 'Imrul' })
 ```
 
-```sql
+```js
 > db.users.find()
 ```
 
-```sql
+```js
 > ObjectId() 
 ```
 
 > Generate using ob id serally wherever call this each of time. Object id generate with a timeStamps.
 
-```sql
+```js
 > ObjectId().getTimestamp()
 ```
 
@@ -660,15 +660,15 @@ demo:SECONDARY>
 
 - Insert on different doc with same id using `Save` method?
 
-```sql
+```js
 > db.foo.save({_id:1, name:'Imrul'})
 ```
 
-```sql
+```js
 > db.foo.save({_id:1, price:1.99})
 ```
 
-```sql
+```js
 > db.foo.find()
 ```
 
@@ -678,17 +678,17 @@ demo:SECONDARY>
 
 - Insert on different doc with same id using `insert` method?
 
-```sql
+```js
 > db.bar.insert({_id:1, name:'Imrul'})
 ```
 
-```sql
+```js
 > db.bar.insert({_id:1, price:1.99})
 ```
 
 > Error [duplicate key error]
 
-```sql
+```js
 > db.bar.find()
 ```
 
@@ -698,19 +698,19 @@ demo:SECONDARY>
 
 > In this case both doc will insert as mongo generate unique `_id` for both doc as we did not specify the `id`
 
-```sql
+```js
 > db.test.save({_id:1, address:{present:'savar', permanent:'dhamrai'}})
 ```
 
 - Normal Output
 
-```sql
+```js
 > db.users.find()	
 ```
 
 - Pretty Output
 
-```sql
+```js
 > db.users.find().pretty()
 ```
 
@@ -722,7 +722,7 @@ demo:SECONDARY>
 
 - Below is very bad idea:
 
-```sql
+```js
 > db.a.save({_id:1, x:10})
 > var doc = db.a.findOne({_id:1})
 > doc.x = doc.x+1
@@ -746,7 +746,7 @@ demo:SECONDARY>
 > Syntax: `db.foo.update(query, update, options);`  Options=[One,Many, Upsert]
 
 
-```sql
+```js
 > db.b.save({_id:1, x:10})
 > db.b.update({_id:1}, {$inc:{x:1}})
 ```
@@ -758,7 +758,7 @@ demo:SECONDARY>
 ---
 
 
-```sql
+```js
 > db.b.find()	      /*{ "_id" : 1, "x" : 11 }*/
 > db.b.update({_id:1}, {$set:{y:3}})
 > db.b.update({_id:1}, {$inc:{x:1}})
@@ -772,7 +772,7 @@ demo:SECONDARY>
 ---
 
 
-```sql
+```js
 > db.b.find()	/*{ "_id" : 1, "x" : 12, "y" : 3 }*/
 > db.b.update({_id:1}, {$unset:{y:''}})
 > db.b.find()	/*{ "_id" : 1, "x" : 12 }*/
@@ -784,7 +784,7 @@ demo:SECONDARY>
 
 ---
 
-```sql
+```js
 > db.c.save({_id:1, Naem: 'Imrul'})
 > db.c.find()	/*{ "_id" : 1, "Naem" : "Imrul" }*/
 > db.c.update({_id:1}, {$rename:{'Naem':'Name'}})
@@ -797,7 +797,7 @@ demo:SECONDARY>
 
 ---
 
-```sql
+```js
 > db.a.save({_id:1})
 > db.a.find()	/*{ "_id" : 1 }*/
 
@@ -814,7 +814,7 @@ demo:SECONDARY>
 > `'three'` is pushed again although 'three' is already in the array.
 -- How to prevent this?
 
-```sql
+```js
 > db.a.update({_id:1}, {$addToSet:{things: 'four'}})
 > db.a.find()	/*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "four" ] }*/
 > db.a.update({_id:1}, {$addToSet:{things: 'four'}})
@@ -827,7 +827,7 @@ demo:SECONDARY>
 
 ---
 
-```sql
+```js
 > db.a.find() /*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "fout", "four" ] }*/
 ```
 
@@ -836,7 +836,7 @@ demo:SECONDARY>
 - Removed all the element containing 'fout' from the array
 
 
-```sql
+```js
 > db.a.update({_id:1}, {$pull:{things: 'fout'}})
 > db.a.find()	/*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "four" ] }*/
 ```
@@ -850,7 +850,7 @@ demo:SECONDARY>
 
 ---
 
-```sql
+```js
 > db.a.find()	/*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "four" ] }*/
 
 /*pop last element*/
@@ -874,7 +874,7 @@ demo:SECONDARY>
 
 - Multiple Update
 
-```sql
+```js
 > db.m.find()
 /*
 	{ "_id" : 1, "things" : [ 1, 2, 3 ] }
@@ -884,7 +884,7 @@ demo:SECONDARY>
 */
 ```
 
-```sql
+```js
 > db.m.update({},{$push:{things:4}})
 > db.m.find()
 /*
@@ -899,7 +899,7 @@ demo:SECONDARY>
 
 > `Solution?`:: Add option as `{nulti:true}`
 
-```sql
+```js
 > db.m.update({},{$push:{things:4}}, {multi:true})
 > db.m.find()
 /*
@@ -912,7 +912,7 @@ demo:SECONDARY>
 
 - Update where things contains element '2'
 
-```sql
+```js
 > db.m.update({things:1},{$push:{things:78}}, {multi:true})
 > db.m.find()
 /*
@@ -945,35 +945,35 @@ demo:SECONDARY>
 
 ## Find
 
-```sql
+```js
 db.foo.find(query, projection)	
 /***
 	query: wich doc?
 	projections: which fields should we return?
 ***/
 
-> db.animals.find({_id:1})			-- return whole doc.
+> db.animals.find({_id:1})					//return whole doc.
 
 > db.animals.find({_id:1}, {_id:1})	
 
-> db.animals.find({_id:{$gt:5}}, {_id:1})	-- get id of all all rows where id>5
+> db.animals.find({_id:{$gt:5}}, {_id:1})			//get id of all all rows where id>5
 
-> db.animals.find({_id:{$lt:5}}, {_id:1})	-- lt:less than
+> db.animals.find({_id:{$lt:5}}, {_id:1})			//lt:less than
 
-> db.animals.find({_id:{$lte:5}}, {_id:1})	-- less than equal:lte
+> db.animals.find({_id:{$lte:5}}, {_id:1})			//less than equal:lte
 
-> db.animals.find({_id:{$gt:2, $lt:4}}, {_id:1})	-- greater than and less than
+> db.animals.find({_id:{$gt:2, $lt:4}}, {_id:1})	//greater than and less than
 
-> db.animals.find({_id:{$not: {$gt:2}}}, {_id:1})	-- not greater than 
+> db.animals.find({_id:{$not: {$gt:2}}}, {_id:1})	//not greater than 
 
-> db.animals.find({_id: {$in: [1,3]} }, {_id:1})	-- id in [1,3]
+> db.animals.find({_id: {$in: [1,3]} }, {_id:1})	//id in [1,3]
 
-> db.animals.find({_id: {$nin: [1,3]} }, {_id:1})	-- not in [1,3]
+> db.animals.find({_id: {$nin: [1,3]} }, {_id:1})	//not in [1,3]
 ```
 
 ## Array
 
-```sql
+```js
 > db.animals.find({_id:1}).pretty()
 ```
 
@@ -993,14 +993,14 @@ db.foo.find(query, projection)
 ```
 
 
-```sql
-> db.animals.find({tags: 'cute'}, {name:1})		-- case sensitive
+```js
+> db.animals.find({tags: 'cute'}, {name:1})						//case sensitive
 
 > db.animals.find({tags: {$in: ['cute', 'ocean']} }, {name:1})
 
-> db.animals.find({tags: {$all: ['cute', 'ocean']} }, {name:1})	-- /get data where tags are both 'cute' and 'ocean'
+> db.animals.find({tags: {$all: ['cute', 'ocean']} }, {name:1})	//get data where tags are both 'cute' and 'ocean'
 
-> db.animals.find({tags: {$nin: ['cute']} }, {name:1})	-- get who are not cute as tags
+> db.animals.find({tags: {$nin: ['cute']} }, {name:1})			//get who are not cute as tags
 ```
 
 
@@ -1009,52 +1009,52 @@ db.foo.find(query, projection)
 - `"info"` contains sub document.
 
 
-```sql
-> db.animals.find({"info.canFly":true}).pretty()	-- info is attr of doc and canFly is attr of info.
+```js
+> db.animals.find({"info.canFly":true}).pretty()						//info is attr of doc and canFly is attr of info.
 
 
-> db.animals.find({"info": {type:'bird', canFly:true}}, {name:1})-- get the rows
+> db.animals.find({"info": {type:'bird', canFly:true}}, {name:1})		//get the rows
 
-> db.animals.find({"info": {canFly:true, type:'bird'}}, {name:1})-- may not get the rows if unordered
+> db.animals.find({"info": {canFly:true, type:'bird'}}, {name:1})		//may not get the rows if unordered
 	
-> db.animals.find({"info.canFly":true, "info.type":'bird'},{name:1})-- Safe Zone | Using dot notation.
+> db.animals.find({"info.canFly":true, "info.type":'bird'},{name:1})	//Safe Zone | Using dot notation.
 
 ```
 
 ## Null and $exists
 
 
-```sql
+```js
 
-> db.animals.find({"info.canFly": null},{name:1})	-- return both where canFly == null or canFly field is not exists
+> db.animals.find({"info.canFly": null},{name:1})				//return both where canFly == null or canFly field is not exists
 
--- If I want to be strict on that
+//If I want to be strict on that
 > db.animals.find({"info.canFly": {$exists: true} },{name:1})
 ```
 
 ## And
 
 
-```sql
-> db.animals.find({"info.type":'bird', tags:'ocean'}, {name:1}) -- /here `,` performs like an AND
+```js
+> db.animals.find({"info.type":'bird', tags:'ocean'}, {name:1}) 	//here `,` performs like an AND
 ```
 
 ## More Projection
 
-```sql
-> db.animals.find({_id:1}, {_id:1, name:1})	-- Return included id and name
+```js
+> db.animals.find({_id:1}, {_id:1, name:1})			//Return included id and name
 
 
-> db.animals.find({_id:1}, {_id:0, name:0})	-- Return excluding id and name
+> db.animals.find({_id:1}, {_id:0, name:0})			//Return excluding id and name
 
-> db.animals.find({_id:1}, {name:1})	-- will return id and name. id is special field if not mentioned then id will be returned by default
+> db.animals.find({_id:1}, {name:1})				//will return id and name. id is special field if not mentioned then id will be returned by default
 ```
 
 
 ## Cursor
 
 
-```sql
+```js
 > var c  = db.animals.find({},{name:1})
 
 > c.size()	-- 6
@@ -1067,33 +1067,33 @@ db.foo.find(query, projection)
 
 ## Sort
 
-```sql
-> db.animals.find({},{name:1}).sort({name:1}) -- ASC:1 | DESC:-1
+```js
+> db.animals.find({},{name:1}).sort({name:1}) 									//ASC:1 | DESC:-1
 
--- Can sort in sub doc too.
+//Can sort in sub doc too.
 > db.animals.find({},{name:1, "info.type":1}).sort({"info.type":1,"name":1})	
 ```
 
 
 ## Limit
 
-```sql
-> db.animals.find({},{name:1}).sort({name:1}).limit(3)	-- top 2 rows will be returned
+```js
+> db.animals.find({},{name:1}).sort({name:1}).limit(3)		//top 2 rows will be returned
 ```
 
 ## skip
 
 
-```sql
--- {1,2,3,4,5,6}
-> db.animals.find({},{name:1}).sort({_id:-1}).skip(1).limit(3)	-- results: 5,4,3 [_id=6 is skipped]
+```js
+//{1,2,3,4,5,6}
+> db.animals.find({},{name:1}).sort({_id:-1}).skip(1).limit(3)	//results: 5,4,3 [_id=6 is skipped]
 ```
 
 
 ## findOne
 
-```sql
-> db.animals.findOne({_id:1})	-- returns only 1 row
+```js
+> db.animals.findOne({_id:1})	//returns only 1 row
 ```
 
 
@@ -1112,12 +1112,12 @@ db.foo.find(query, projection)
 
 ## Problem
 
-```sql
+```js
 > db.foo.find({x:10})
 ```
 
 ```js
--- Server Does: 
+//Server Does: 
  for each doc d in 'foo'{
 	if (d.x==10){
 		return d
@@ -1142,7 +1142,7 @@ db.foo.find(query, projection)
 
 # Create Index
 
-```sql
+```js
 > db.foo.ensureIndex(keys, options)	
 ```
 
@@ -1155,7 +1155,7 @@ db.foo.find(query, projection)
 - Finding indexes in the animals collection
 
 
-```sql
+```js
 > db.system.indexes.find({ns:'test.animals'}, {key:1})	
 /***
 { "key" : {"_id": 1} }
@@ -1169,7 +1169,7 @@ db.foo.find(query, projection)
 
 ## Explain()
 
-```sql
+```js
 > db.animals.find({name:'cat'}).explain()
 /***
 	cursor: BasicCursor ; when no index
@@ -1181,8 +1181,8 @@ db.foo.find(query, projection)
 
 ## Create an index
 
-```sql
-> db.animals.ensureIndex({name:1})	-- 1:index in ASC order, -1:index in DESC order
+```js
+> db.animals.ensureIndex({name:1})		//1:index in ASC order, -1:index in DESC order
 
 ```
 
@@ -1194,35 +1194,35 @@ db.foo.find(query, projection)
 
 ## drop Index
 
-```sql
-> db.animals.dropIndex("name_1") -- "name_1" is the name of the index. indexing on "_id" is always. _id can not be dropped.
+```js
+> db.animals.dropIndex("name_1") 				//"name_1" is the name of the index. indexing on "_id" is always. _id can not be dropped.
 ```
 
 ## Nested Fields
 
-```sql
-> db.animals.ensureIndex({"info.color":1})	-- info is the field of doc. color is field of info.
+```js
+> db.animals.ensureIndex({"info.color":1})		//info is the field of doc. color is field of info.
 ```
 
 
 ## Array Field
 
 
-```sql
-> db.animals.ensureIndex({tags:1})	-- tags is an array
+```js
+> db.animals.ensureIndex({tags:1})				//tags is an array
 ```
 
 
 ## Sort
 
-```sql
-> db.animals.find({tags:'ocean'}).sort({name:1}).explain()	-- scanAndOrder: false
+```js
+> db.animals.find({tags:'ocean'}).sort({name:1}).explain()	//scanAndOrder: false
 ```
 
 ## Unique
 
-```sql
-> db.animals.ensureIndex({name:1}, {unique:true})	-- So name should be unique. Duplicate entry will cause an error
+```js
+> db.animals.ensureIndex({name:1}, {unique:true})	//o name should be unique. Duplicate entry will cause an error
 ```
 
 ## Sparse
@@ -1231,16 +1231,16 @@ db.foo.find(query, projection)
 
 - Sparce: --> only create an entry for the doc where the field exists.
 
-```sql
-> db.animals.ensureIndex({"info.color":1}, {sparse:true})	-- sparse index on color field
+```js
+> db.animals.ensureIndex({"info.color":1}, {sparse:true})		//sparse index on color field
 ```
 
 
 ## Compound
 
 
-```sql
-> db.animals.ensureIndex({tags:1, name:1})	-- index on tags and name
+```js
+> db.animals.ensureIndex({tags:1, name:1})		//index on tags and name
 ```
 
 
@@ -1251,9 +1251,9 @@ db.foo.find(query, projection)
 
 ## Background Build
 
-```sql
+```js
 > db.animals.ensureIndex({tags:1}, {background: true})	
--- So indexing will execute in Background... So read and write operation can be execute while indexing
+//So indexing will execute in Background... So read and write operation can be execute while indexing
 ```
 
 > `disadvantage`: much longer time than of foreground
@@ -1268,7 +1268,7 @@ db.foo.find(query, projection)
 
 - Solution?
 
-```sql
+```js
 > db.animals.ensureIndex(keys, {name: 'small'})
 > db.system.indexes.find({ns: 'test.animals'}).pretty()
 ```
