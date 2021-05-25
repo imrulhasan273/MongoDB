@@ -459,23 +459,23 @@ db.foo.find(query, projection)
 	projections: which fields should we return?
 ***/
 
-> db.animals.find({_id:1})			//return whole doc.
+> db.animals.find({_id:1})			-- return whole doc.
 
 > db.animals.find({_id:1}, {_id:1})	
 
-> db.animals.find({_id:{$gt:5}}, {_id:1})	//get id of all all rows where id>5
+> db.animals.find({_id:{$gt:5}}, {_id:1})	-- get id of all all rows where id>5
 
-> db.animals.find({_id:{$lt:5}}, {_id:1})	//lt:less than
+> db.animals.find({_id:{$lt:5}}, {_id:1})	-- lt:less than
 
-> db.animals.find({_id:{$lte:5}}, {_id:1})	//less than equal:lte
+> db.animals.find({_id:{$lte:5}}, {_id:1})	-- less than equal:lte
 
-> db.animals.find({_id:{$gt:2, $lt:4}}, {_id:1})	//greater than and less than
+> db.animals.find({_id:{$gt:2, $lt:4}}, {_id:1})	-- greater than and less than
 
-> db.animals.find({_id:{$not: {$gt:2}}}, {_id:1})	//not greater than 
+> db.animals.find({_id:{$not: {$gt:2}}}, {_id:1})	-- not greater than 
 
-> db.animals.find({_id: {$in: [1,3]} }, {_id:1})	//id in [1,3]
+> db.animals.find({_id: {$in: [1,3]} }, {_id:1})	-- id in [1,3]
 
-> db.animals.find({_id: {$nin: [1,3]} }, {_id:1})	//not in [1,3]
+> db.animals.find({_id: {$nin: [1,3]} }, {_id:1})	-- not in [1,3]
 ```
 
 ## Array
@@ -501,13 +501,13 @@ db.foo.find(query, projection)
 
 
 ```sql
-> db.animals.find({tags: 'cute'}, {name:1})		//case sensitive
+> db.animals.find({tags: 'cute'}, {name:1})		-- case sensitive
 
 > db.animals.find({tags: {$in: ['cute', 'ocean']} }, {name:1})
 
-> db.animals.find({tags: {$all: ['cute', 'ocean']} }, {name:1})	///get data where tags are both 'cute' and 'ocean'
+> db.animals.find({tags: {$all: ['cute', 'ocean']} }, {name:1})	-- /get data where tags are both 'cute' and 'ocean'
 
-> db.animals.find({tags: {$nin: ['cute']} }, {name:1})	//get who are not cute as tags
+> db.animals.find({tags: {$nin: ['cute']} }, {name:1})	-- get who are not cute as tags
 ```
 
 
@@ -517,14 +517,14 @@ db.foo.find(query, projection)
 
 
 ```sql
-> db.animals.find({"info.canFly":true}).pretty()	//info is attr of doc and canFly is attr of info.
+> db.animals.find({"info.canFly":true}).pretty()	-- info is attr of doc and canFly is attr of info.
 
 
-> db.animals.find({"info": {type:'bird', canFly:true}}, {name:1})//get the rows
+> db.animals.find({"info": {type:'bird', canFly:true}}, {name:1})-- get the rows
 
-> db.animals.find({"info": {canFly:true, type:'bird'}}, {name:1})//may not get the rows if unordered
+> db.animals.find({"info": {canFly:true, type:'bird'}}, {name:1})-- may not get the rows if unordered
 	
-> db.animals.find({"info.canFly":true, "info.type":'bird'},{name:1})//Safe Zone | Using dot notation.
+> db.animals.find({"info.canFly":true, "info.type":'bird'},{name:1})-- Safe Zone | Using dot notation.
 
 ```
 
@@ -533,9 +533,9 @@ db.foo.find(query, projection)
 
 ```sql
 
-> db.animals.find({"info.canFly": null},{name:1})	//return both where canFly == null or canFly field is not exists
+> db.animals.find({"info.canFly": null},{name:1})	-- return both where canFly == null or canFly field is not exists
 
-//If I want to be strict on that
+-- If I want to be strict on that
 > db.animals.find({"info.canFly": {$exists: true} },{name:1})
 ```
 
@@ -543,18 +543,18 @@ db.foo.find(query, projection)
 
 
 ```sql
-> db.animals.find({"info.type":'bird', tags:'ocean'}, {name:1}) ///here `,` performs like an AND
+> db.animals.find({"info.type":'bird', tags:'ocean'}, {name:1}) -- /here `,` performs like an AND
 ```
 
 ## More Projection
 
 ```sql
-> db.animals.find({_id:1}, {_id:1, name:1})	//Return included id and name
+> db.animals.find({_id:1}, {_id:1, name:1})	-- Return included id and name
 
 
-> db.animals.find({_id:1}, {_id:0, name:0})	//Return excluding id and name
+> db.animals.find({_id:1}, {_id:0, name:0})	-- Return excluding id and name
 
-> db.animals.find({_id:1}, {name:1})	//will return id and name. id is special field if not mentioned then id will be returned by default
+> db.animals.find({_id:1}, {name:1})	-- will return id and name. id is special field if not mentioned then id will be returned by default
 ```
 
 
@@ -564,9 +564,9 @@ db.foo.find(query, projection)
 ```sql
 > var c  = db.animals.find({},{name:1})
 
-> c.size()	//6
+> c.size()	-- 6
 
-> c.hasNext()	//true
+> c.hasNext()	-- true
 
 > c.forEach( function(d) { print(d.name) } )
 ```
@@ -575,9 +575,9 @@ db.foo.find(query, projection)
 ## Sort
 
 ```sql
-> db.animals.find({},{name:1}).sort({name:1}) //ASC:1 | DESC:-1
+> db.animals.find({},{name:1}).sort({name:1}) -- ASC:1 | DESC:-1
 
-//Can sort in sub doc too.
+-- Can sort in sub doc too.
 > db.animals.find({},{name:1, "info.type":1}).sort({"info.type":1,"name":1})	
 ```
 
@@ -585,7 +585,7 @@ db.foo.find(query, projection)
 ## Limit
 
 ```sql
-> db.animals.find({},{name:1}).sort({name:1}).limit(3)	//top 2 rows will be returned
+> db.animals.find({},{name:1}).sort({name:1}).limit(3)	-- top 2 rows will be returned
 ```
 
 ## skip
@@ -593,14 +593,14 @@ db.foo.find(query, projection)
 
 ```sql
 -- {1,2,3,4,5,6}
-> db.animals.find({},{name:1}).sort({_id:-1}).skip(1).limit(3)	//results: 5,4,3 [_id=6 is skipped]
+> db.animals.find({},{name:1}).sort({_id:-1}).skip(1).limit(3)	-- results: 5,4,3 [_id=6 is skipped]
 ```
 
 
 ## findOne
 
 ```sql
-> db.animals.findOne({_id:1})	//returns only 1 row
+> db.animals.findOne({_id:1})	-- returns only 1 row
 ```
 
 
@@ -624,7 +624,7 @@ db.foo.find(query, projection)
 ```
 
 ```js
-//Server Does: 
+-- Server Does: 
  for each doc d in 'foo'{
 	if (d.x==10){
 		return d
@@ -689,7 +689,7 @@ db.foo.find(query, projection)
 ## Create an index
 
 ```sql
-> db.animals.ensureIndex({name:1})	//1:index in ASC order, -1:index in DESC order
+> db.animals.ensureIndex({name:1})	-- 1:index in ASC order, -1:index in DESC order
 
 ```
 
@@ -702,13 +702,13 @@ db.foo.find(query, projection)
 ## drop Index
 
 ```sql
-> db.animals.dropIndex("name_1") //"name_1" is the name of the index. indexing on "_id" is always. _id can not be dropped.
+> db.animals.dropIndex("name_1") -- "name_1" is the name of the index. indexing on "_id" is always. _id can not be dropped.
 ```
 
 ## Nested Fields
 
 ```sql
-> db.animals.ensureIndex({"info.color":1})	//info is the field of doc. color is field of info.
+> db.animals.ensureIndex({"info.color":1})	-- info is the field of doc. color is field of info.
 ```
 
 
@@ -716,20 +716,20 @@ db.foo.find(query, projection)
 
 
 ```sql
-> db.animals.ensureIndex({tags:1})	//tags is an array
+> db.animals.ensureIndex({tags:1})	-- tags is an array
 ```
 
 
 ## Sort
 
 ```sql
-> db.animals.find({tags:'ocean'}).sort({name:1}).explain()	//scanAndOrder: false
+> db.animals.find({tags:'ocean'}).sort({name:1}).explain()	-- scanAndOrder: false
 ```
 
 ## Unique
 
 ```sql
-> db.animals.ensureIndex({name:1}, {unique:true})	//So name should be unique. Duplicate entry will cause an error
+> db.animals.ensureIndex({name:1}, {unique:true})	-- So name should be unique. Duplicate entry will cause an error
 ```
 
 ## Sparse
@@ -739,7 +739,7 @@ db.foo.find(query, projection)
 - Sparce: --> only create an entry for the doc where the field exists.
 
 ```sql
-> db.animals.ensureIndex({"info.color":1}, {sparse:true})	//sparse index on color field
+> db.animals.ensureIndex({"info.color":1}, {sparse:true})	-- sparse index on color field
 ```
 
 
@@ -747,7 +747,7 @@ db.foo.find(query, projection)
 
 
 ```sql
-> db.animals.ensureIndex({tags:1, name:1})	//index on tags and name
+> db.animals.ensureIndex({tags:1, name:1})	-- index on tags and name
 ```
 
 
@@ -760,7 +760,7 @@ db.foo.find(query, projection)
 
 ```sql
 > db.animals.ensureIndex({tags:1}, {background: true})	
-//So indexing will execute in Background... So read and write operation can be execute while indexing
+-- So indexing will execute in Background... So read and write operation can be execute while indexing
 ```
 
 > `disadvantage`: much longer time than of foreground
