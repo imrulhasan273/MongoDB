@@ -11,25 +11,25 @@
 
 - Show all the db
 
-```json
+```sql
 > db
 ```
 
 - Swith to another DB
 
-```json
+```sql
 > use foo
 ```
 
 - Addministrative commands?
 
-```json
+```sql
 > help
 ```
 
 - Get Server Address
 
-```json
+```sql
 > db.getMongo()
 ```
 
@@ -42,11 +42,11 @@
 - Config
 
 
-```json
+```sql
 > var demoConfig = {...}
 ```
 
-```json
+```sql
 > demoConfig
 	{
 		"_id"	 :"demo",
@@ -69,11 +69,11 @@
 	}
 ```
 
-```json
+```sql
 > rs.initiate(demoConfig)
 ```
 
-```json
+```sql
 > db.foo.save({"_id": 1, "value":"Hello World"})
 > db.foo.find()
 ```
@@ -81,7 +81,7 @@
 - From Secondary slaves
 
 
-```json
+```sql
 > db.foo.find()     /* Could not find the data */
 > db.setSlaveOk()
 > db.foo.find()		/* Now ok*/
@@ -108,12 +108,12 @@
 
 - will show collection of that db
 
-```json
+```sql
 > use test_db		
 > show collections  
 ```
 
-```json
+```sql
 > db.foo.save({_id: 1, x: 10})
 ```
 
@@ -121,17 +121,17 @@
 
 - Fetch the record from foo collection
 
-```json
+```sql
 > db.foo.find()
 ```
 
-```json
+```sql
 > db.system.indexes.find()
 ```
 
 - Type of `_id` in doc?
 
-```json
+```sql
 	_id: 1
 	_id: 3.14
 	_id: "Hello"
@@ -145,21 +145,21 @@
 
 ## **Complex doc**
 
-```json
+```sql
 > db.users.save({ Name: 'Imrul' })
 ```
 
-```json
+```sql
 > db.users.find()
 ```
 
-```json
+```sql
 > ObjectId() 
 ```
 
 > Generate using ob id serally wherever call this each of time. Object id generate with a timeStamps.
 
-```json
+```sql
 > ObjectId().getTimestamp()
 ```
 
@@ -167,15 +167,15 @@
 
 - Insert on different doc with same id using `Save` method?
 
-```json
+```sql
 > db.foo.save({_id:1, name:'Imrul'})
 ```
 
-```json
+```sql
 > db.foo.save({_id:1, price:1.99})
 ```
 
-```json
+```sql
 > db.foo.find()
 ```
 
@@ -185,17 +185,17 @@
 
 - Insert on different doc with same id using `insert` method?
 
-```json
+```sql
 > db.bar.insert({_id:1, name:'Imrul'})
 ```
 
-```json
+```sql
 > db.bar.insert({_id:1, price:1.99})
 ```
 
 > Error [duplicate key error]
 
-```json
+```sql
 > db.bar.find()
 ```
 
@@ -205,19 +205,19 @@
 
 > In this case both doc will insert as mongo generate unique `_id` for both doc as we did not specify the `id`
 
-```json
+```sql
 > db.test.save({_id:1, address:{present:'savar', permanent:'dhamrai'}})
 ```
 
 - Normal Output
 
-```json
+```sql
 > db.users.find()	
 ```
 
 - Pretty Output
 
-```json
+```sql
 > db.users.find().pretty()
 ```
 
@@ -229,7 +229,7 @@
 
 - Below is very bad idea:
 
-```json
+```sql
 > db.a.save({_id:1, x:10})
 > var doc = db.a.findOne({_id:1})
 > doc.x = doc.x+1
@@ -253,7 +253,7 @@
 > Syntax: `db.foo.update(query, update, options);`  Options=[One,Many, Upsert]
 
 
-```json
+```sql
 > db.b.save({_id:1, x:10})
 > db.b.update({_id:1}, {$inc:{x:1}})
 ```
@@ -265,7 +265,7 @@
 ---
 
 
-```json
+```sql
 > db.b.find()	      /*{ "_id" : 1, "x" : 11 }*/
 > db.b.update({_id:1}, {$set:{y:3}})
 > db.b.update({_id:1}, {$inc:{x:1}})
@@ -279,7 +279,7 @@
 ---
 
 
-```json
+```sql
 > db.b.find()	/*{ "_id" : 1, "x" : 12, "y" : 3 }*/
 > db.b.update({_id:1}, {$unset:{y:''}})
 > db.b.find()	/*{ "_id" : 1, "x" : 12 }*/
@@ -291,7 +291,7 @@
 
 ---
 
-```json
+```sql
 > db.c.save({_id:1, Naem: 'Imrul'})
 > db.c.find()	/*{ "_id" : 1, "Naem" : "Imrul" }*/
 > db.c.update({_id:1}, {$rename:{'Naem':'Name'}})
@@ -304,7 +304,7 @@
 
 ---
 
-```json
+```sql
 > db.a.save({_id:1})
 > db.a.find()	/*{ "_id" : 1 }*/
 
@@ -321,7 +321,7 @@
 > `'three'` is pushed again although 'three' is already in the array.
 -- How to prevent this?
 
-```json
+```sql
 > db.a.update({_id:1}, {$addToSet:{things: 'four'}})
 > db.a.find()	/*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "four" ] }*/
 > db.a.update({_id:1}, {$addToSet:{things: 'four'}})
@@ -334,7 +334,7 @@
 
 ---
 
-```json
+```sql
 > db.a.find() /*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "fout", "four" ] }*/
 ```
 
@@ -343,7 +343,7 @@
 - Removed all the element containing 'fout' from the array
 
 
-```json
+```sql
 > db.a.update({_id:1}, {$pull:{things: 'fout'}})
 > db.a.find()	/*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "four" ] }*/
 ```
@@ -357,7 +357,7 @@
 
 ---
 
-```json
+```sql
 > db.a.find()	/*{ "_id" : 1, "things" : [ "one", "two", "three", "three", "four" ] }*/
 
 /*pop last element*/
@@ -381,7 +381,7 @@
 
 - Multiple Update
 
-```json
+```sql
 > db.m.find()
 /*
 	{ "_id" : 1, "things" : [ 1, 2, 3 ] }
@@ -391,7 +391,7 @@
 */
 ```
 
-```json
+```sql
 > db.m.update({},{$push:{things:4}})
 > db.m.find()
 /*
@@ -406,7 +406,7 @@
 
 > `Solution?`:: Add option as `{nulti:true}`
 
-```json
+```sql
 > db.m.update({},{$push:{things:4}}, {multi:true})
 > db.m.find()
 /*
@@ -419,7 +419,7 @@
 
 - Update where things contains element '2'
 
-```json
+```sql
 > db.m.update({things:1},{$push:{things:78}}, {multi:true})
 > db.m.find()
 /*
@@ -452,7 +452,7 @@
 
 ## Find
 
-```json
+```sql
 db.foo.find(query, projection)	
 /***
 	query: wich doc?
@@ -480,7 +480,7 @@ db.foo.find(query, projection)
 
 ## Array
 
-```json
+```sql
 > db.animals.find({_id:1}).pretty()
 ```
 
@@ -500,7 +500,7 @@ db.foo.find(query, projection)
 ```
 
 
-```json
+```sql
 > db.animals.find({tags: 'cute'}, {name:1})		//case sensitive
 
 > db.animals.find({tags: {$in: ['cute', 'ocean']} }, {name:1})
@@ -516,7 +516,7 @@ db.foo.find(query, projection)
 - `"info"` contains sub document.
 
 
-```json
+```sql
 > db.animals.find({"info.canFly":true}).pretty()	//info is attr of doc and canFly is attr of info.
 
 
@@ -531,7 +531,7 @@ db.foo.find(query, projection)
 ## Null and $exists
 
 
-```json
+```sql
 
 > db.animals.find({"info.canFly": null},{name:1})	//return both where canFly == null or canFly field is not exists
 
@@ -542,13 +542,13 @@ db.foo.find(query, projection)
 ## And
 
 
-```json
+```sql
 > db.animals.find({"info.type":'bird', tags:'ocean'}, {name:1}) ///here `,` performs like an AND
 ```
 
 ## More Projection
 
-```json
+```sql
 > db.animals.find({_id:1}, {_id:1, name:1})	//Return included id and name
 
 
@@ -561,7 +561,7 @@ db.foo.find(query, projection)
 ## Cursor
 
 
-```json
+```sql
 > var c  = db.animals.find({},{name:1})
 
 > c.size()	//6
@@ -574,7 +574,7 @@ db.foo.find(query, projection)
 
 ## Sort
 
-```json
+```sql
 > db.animals.find({},{name:1}).sort({name:1}) //ASC:1 | DESC:-1
 
 //Can sort in sub doc too.
@@ -584,14 +584,14 @@ db.foo.find(query, projection)
 
 ## Limit
 
-```json
+```sql
 > db.animals.find({},{name:1}).sort({name:1}).limit(3)	//top 2 rows will be returned
 ```
 
 ## skip
 
 
-```json
+```sql
 -- {1,2,3,4,5,6}
 > db.animals.find({},{name:1}).sort({_id:-1}).skip(1).limit(3)	//results: 5,4,3 [_id=6 is skipped]
 ```
@@ -599,7 +599,7 @@ db.foo.find(query, projection)
 
 ## findOne
 
-```json
+```sql
 > db.animals.findOne({_id:1})	//returns only 1 row
 ```
 
@@ -619,7 +619,7 @@ db.foo.find(query, projection)
 
 ## Problem
 
-```json
+```sql
 > db.foo.find({x:10})
 ```
 
@@ -649,7 +649,7 @@ db.foo.find(query, projection)
 
 # Create Index
 
-```json
+```sql
 > db.foo.ensureIndex(keys, options)	
 ```
 
@@ -662,7 +662,7 @@ db.foo.find(query, projection)
 - Finding indexes in the animals collection
 
 
-```json
+```sql
 > db.system.indexes.find({ns:'test.animals'}, {key:1})	
 /***
 { "key" : {"_id": 1} }
@@ -676,7 +676,7 @@ db.foo.find(query, projection)
 
 ## Explain()
 
-```json
+```sql
 > db.animals.find({name:'cat'}).explain()
 /***
 	cursor: BasicCursor ; when no index
@@ -688,7 +688,7 @@ db.foo.find(query, projection)
 
 ## Create an index
 
-```json
+```sql
 > db.animals.ensureIndex({name:1})	//1:index in ASC order, -1:index in DESC order
 
 ```
@@ -701,13 +701,13 @@ db.foo.find(query, projection)
 
 ## drop Index
 
-```json
+```sql
 > db.animals.dropIndex("name_1") //"name_1" is the name of the index. indexing on "_id" is always. _id can not be dropped.
 ```
 
 ## Nested Fields
 
-```json
+```sql
 > db.animals.ensureIndex({"info.color":1})	//info is the field of doc. color is field of info.
 ```
 
@@ -715,20 +715,20 @@ db.foo.find(query, projection)
 ## Array Field
 
 
-```json
+```sql
 > db.animals.ensureIndex({tags:1})	//tags is an array
 ```
 
 
 ## Sort
 
-```json
+```sql
 > db.animals.find({tags:'ocean'}).sort({name:1}).explain()	//scanAndOrder: false
 ```
 
 ## Unique
 
-```json
+```sql
 > db.animals.ensureIndex({name:1}, {unique:true})	//So name should be unique. Duplicate entry will cause an error
 ```
 
@@ -738,7 +738,7 @@ db.foo.find(query, projection)
 
 - Sparce: --> only create an entry for the doc where the field exists.
 
-```json
+```sql
 > db.animals.ensureIndex({"info.color":1}, {sparse:true})	//sparse index on color field
 ```
 
@@ -746,7 +746,7 @@ db.foo.find(query, projection)
 ## Compound
 
 
-```json
+```sql
 > db.animals.ensureIndex({tags:1, name:1})	//index on tags and name
 ```
 
@@ -758,7 +758,7 @@ db.foo.find(query, projection)
 
 ## Background Build
 
-```json
+```sql
 > db.animals.ensureIndex({tags:1}, {background: true})	
 //So indexing will execute in Background... So read and write operation can be execute while indexing
 ```
@@ -775,7 +775,7 @@ db.foo.find(query, projection)
 
 - Solution?
 
-```json
+```sql
 > db.animals.ensureIndex(keys, {name: 'small'})
 > db.system.indexes.find({ns: 'test.animals'}).pretty()
 ```
